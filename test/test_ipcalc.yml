@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+
+  gather_facts: no
+
+  vars:
+      my_ip: '10.0.0.1'
+      new_ip: '10.0.0.3'
+
+  tasks:
+  - name: "Get the offset host 2 addresses after {{my_ip}}"
+    set_fact: calculated_ip="{{ my_ip | ip_offset(2) }}"
+
+  - name: 'Fail if ip_offset does not return the address we expect.'
+    fail: msg='IP address does not match what we expect.'
+    when: (new_ip != calculated_ip)

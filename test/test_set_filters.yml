@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+
+  gather_facts: no
+  
+  vars:
+      everything: [ 'one', 'two', 'three', 'four' ]
+      some_things: [ 'one', 'four' ]
+      other_things:  [ 'nine', 'ten', 'one' ]
+
+  tasks:
+  - name: 'Fail if is_subset does not return as expected (case 1)'
+    fail: msg='is_subset did not return expected results.'
+    when: "{{ (not (some_things | is_subset(everything) | bool)) | bool }}"
+
+  - name: 'Fail if is_subset does not return as expected (case 2)'
+    fail: msg='is_subset did not return expected results.'
+    when: "{{ other_things | is_subset(everything) | bool }}"

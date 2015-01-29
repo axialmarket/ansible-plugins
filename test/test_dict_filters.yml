@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+
+  gather_facts: no
+
+  vars:
+      dict_one: { 'one': 1, 'uno': 1 }
+      dict_two: { 'two': 2, 'dos': 2 }
+
+      dict_all: {
+          'one': 1,
+          'uno': 1,
+          'two': 2,
+          'dos': 2
+      }
+
+  tasks:
+  - name: 'Fail if the dict_merge filter does not return as expected.'
+    fail: msg='dict_merge did not return expected results.'
+    when: "{{ (dict_all != (dict_one|dict_merge(dict_two) )) | bool }}" 

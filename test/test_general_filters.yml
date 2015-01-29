@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+
+  gather_facts: no
+
+  vars:
+      pre_list: [ 'one', 'two', 'three' ]
+      post_list_prefix: [ 'a one', 'a two', 'a three' ]
+      post_list_suffix: [ 'one up', 'two up', 'three up' ]
+
+  tasks:
+  - name: 'Fail if map_prefix does not work as expected.'
+    fail: msg='map_prefix did not return expected results.'
+    when: '{{ (post_list_prefix != (pre_list|map_prefix("a "))) | bool }}'
+      
+  - name: 'Fail if map_suffix does not work as expected.'
+    fail: msg='map_suffix did not return expected results.'
+    when: '{{ (post_list_suffix != (pre_list|map_suffix(" up"))) | bool }}'
+ 

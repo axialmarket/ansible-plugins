@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+
+  gather_facts: no
+
+  vars:
+      test_items: [ 'host1', 'host2', 'host3', 'host4', 'host5', 'host6' ]
+      test_slots: [ 'site1', 'site2' ]
+
+      expected_results: {
+          'host1': 'site1',
+          'host2': 'site2',
+          'host3': 'site1',
+          'host4': 'site2',
+          'host5': 'site1',
+          'host6': 'site2',
+      }
+
+
+  tasks:
+  - name: 'Fail if the allocate lookup plugin returns unexpected results.'
+    fail: msg='Item ("{{item.current}}") in unexpected slot ("{{item.slot}}")'
+    when: (item.slot != expected_results[item.current])
+    with_allocate:
+        slots: test_slots
+        items: test_items
+  

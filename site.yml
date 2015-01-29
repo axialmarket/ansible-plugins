@@ -1,0 +1,8 @@
+---
+
+# Run Tests
+- include: 'test/test_allocate.yml'
+- include: 'test/test_ipcalc.yml'
+- include: 'test/test_general_filters.yml'
+- include: 'test/test_dict_filters.yml'
+- include: 'test/test_set_filters.yml'
