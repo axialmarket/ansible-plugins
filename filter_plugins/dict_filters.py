@@ -5,6 +5,7 @@ from ansible.errors import AnsibleFilterError
 from collections import Iterable, Mapping
 from functools import partial
 from operator import contains, not_
+from re import search
 
 
 is_iterable = lambda v: isinstance(v, Iterable)
@@ -131,6 +132,41 @@ def select_dicts_for_key_with_value_in_list_filter(
         dict_list, key, values_list, inverted=inverted)
 
 
+def select_dicts_with_keyed_value_matching_pattern_filter(
+        a, *args, **kwargs):
+    '''
+    Given a list of dictionaries as incoming filter data, and a key name and
+    regular expression as arguments, return a list of dictionaries containing
+    a value at the given key matching the given expression.
+    '''
+    if not is_iterable(a):
+        raise AnsibleFilterError('Expecting a list')
+
+    if any(filter(lambda d: not is_mapping(d), a)):
+        raise AnsibleFilterError('Expecting a list of dictionaries.')
+
+    if len(args) != 2:
+        raise AnsibleFilter((
+            'Expecting the key whose value to filter for, and the regular '
+            'expression to match the key\'s value against as arguments.'))
+
+    key = args[0]
+    pattern = args[1]
+
+    filter_func = partial(search, pattern)
+
+    reverse = kwargs.get('reverse', False)
+    op = not_ if reverse else bool
+
+    return filter(lambda d: op(filter_func(resolve_key(d, key) or '')), a)
+
+
+def select_dicts_with_keyed_value_not_matching_pattern_filter(
+        a, *args, **kwargs):
+    return select_dicts_with_keyed_value_matching_pattern_filter(
+        a, *args, reverse=True, **kwargs)
+
+
 def select_dicts_for_key_with_value_in_list(
         dict_list, key, values_list, inverted=False):
     '''
@@ -161,6 +197,10 @@ class FilterModule(object):
                 select_dicts_for_key_with_value_in_list_filter,
             'select_dicts_for_key_with_value_not_in_list':
                 select_dicts_for_key_with_value_not_in_list_filter,
+            'select_dicts_with_keyed_value_matching_pattern':
+                select_dicts_with_keyed_value_matching_pattern_filter,
+            'select_dicts_with_keyed_value_not_matching_pattern':
+                select_dicts_with_keyed_value_not_matching_pattern_filter,
             'dict_merge': dict_merge,
             'dict_nonoverwriting_merge': dict_nonoverwriting_merge,
         }
