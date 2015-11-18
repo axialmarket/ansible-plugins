@@ -186,6 +186,16 @@ def select_dicts_for_key_with_value_in_list(
     return filter(item_test, dict_list)
 
 
+def sort_dicts_by_key(dict_list, key):
+    '''
+    Given a list of dictionaries, return a list of them sorted by the value
+    they each have at the given key.  Keys in nested dicts can be represented
+    as 'key1.key2.key3'
+    '''
+    keyfunc = lambda x: resolve_key(x, key)
+    return sorted(dict_list, key=keyfunc)
+
+
 class FilterModule(object):
 
     def filters(self):
@@ -203,4 +213,5 @@ class FilterModule(object):
                 select_dicts_with_keyed_value_not_matching_pattern_filter,
             'dict_merge': dict_merge,
             'dict_nonoverwriting_merge': dict_nonoverwriting_merge,
+            'sort_dicts_by_key': sort_dicts_by_key,
         }
