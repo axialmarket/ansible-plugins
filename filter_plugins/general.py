@@ -2,6 +2,7 @@
 
 from ansible.errors import AnsibleFilterError
 from collections import Iterable
+import re
 
 
 def get_required_arg_of_type(arguments, argtype=basestring, typedesc='string'):
@@ -51,10 +52,24 @@ def mapped_suffix_filter(a, *args, **kw):
     return mapped_call(call, a)
 
 
+def get_ending_digits(a, *args, **kw):
+    """
+    Get the integers from the end of the given string, else return an empty
+    string.
+    """
+    if not a:
+        return ""
+    m = re.match('.+(\d+)$', a)
+    if m:
+        return m.groups()[0]
+    return ""
+
+
 class FilterModule(object):
 
     def filters(self):
         return {
             'map_prefix': mapped_prefix_filter,
             'map_suffix': mapped_suffix_filter,
+            'get_ending_digits': get_ending_digits,
         }
