@@ -65,6 +65,13 @@ def get_ending_digits(a, *args, **kw):
     return ""
 
 
+def _type(a, *args, **kw):
+    '''
+    Return the type of the incoming object.
+    '''
+    return type(a).__name__
+
+
 class FilterModule(object):
 
     def filters(self):
@@ -72,4 +79,5 @@ class FilterModule(object):
             'map_prefix': mapped_prefix_filter,
             'map_suffix': mapped_suffix_filter,
             'get_ending_digits': get_ending_digits,
+            'type': _type,
         }
